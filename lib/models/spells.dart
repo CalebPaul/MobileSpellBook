@@ -1,36 +1,52 @@
-// To parse this JSON data, do
-//
-//     final spell = spellFromJson(jsonString);
-// Use bool x = field.toLowerCase() for system boolean values
+class Spells {
+  List<SpellObject> spellObjects;
+  String offset;
 
-import 'dart:convert';
+  Spells({this.spellObjects, this.offset});
 
-Spell spellFromJson(String str) => Spell.fromJson(json.decode(str));
+  Spells.fromJson(Map<String, dynamic> json) {
+    if (json['records'] != null) {
+      spellObjects = new List<SpellObject>();
+      json['records'].forEach((v) {
+        spellObjects.add(new SpellObject.fromJson(v));
+      });
+    }
+    offset = json['offset'];
+  }
 
-String spellToJson(Spell data) => json.encode(data.toJson());
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.spellObjects != null) {
+      data['records'] = this.spellObjects.map((v) => v.toJson()).toList();
+    }
+    data['offset'] = this.offset;
+    return data;
+  }
+}
 
-class Spell {
+class SpellObject {
   String id;
   Fields fields;
-  DateTime createdTime;
+  String createdTime;
 
-  Spell({
-    this.id,
-    this.fields,
-    this.createdTime,
-  });
+  SpellObject({this.id, this.fields, this.createdTime});
 
-  factory Spell.fromJson(Map<String, dynamic> json) => Spell(
-    id: json["id"],
-    fields: Fields.fromJson(json["fields"]),
-    createdTime: DateTime.parse(json["createdTime"]),
-  );
+  SpellObject.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    fields =
+        json['fields'] != null ? new Fields.fromJson(json['fields']) : null;
+    createdTime = json['createdTime'];
+  }
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "fields": fields.toJson(),
-    "createdTime": createdTime.toIso8601String(),
-  };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    if (this.fields != null) {
+      data['fields'] = this.fields.toJson();
+    }
+    data['createdTime'] = this.createdTime;
+    return data;
+  }
 }
 
 class Fields {
@@ -41,118 +57,126 @@ class Fields {
   String castingTime;
   String range;
   String components;
-  bool verbal;
-  bool somatic;
-  bool material;
-  bool concentration;
+  String verbal;
+  String somatic;
+  String material;
+  String concentration;
   String duration;
   String savingThrow;
-  bool specialCondition;
-  bool canUpcast;
-  String increasesAtMilestonePcLevels;
+  String specialCondition;
+  String canUpcast;
+  String increasesAtMilestonePCLevels;
   String source1;
   String page;
-  String xGtEUpdateToEePotASpellsSpellList;
-  bool errataFix;
-  bool bard;
-  bool cleric;
-  bool druid;
-  bool paladin;
-  bool ranger;
-  bool sorcerer;
-  bool warlock;
-  bool wizard;
+  String xGtEUpdateToEEPotASpellsSpellList;
+  String errataFix;
+  String bard;
+  String cleric;
+  String druid;
+  String paladin;
+  String ranger;
+  String sorcerer;
+  String warlock;
+  String wizard;
+  String materials;
 
-  Fields({
-    this.spellName,
-    this.level,
-    this.school,
-    this.ritual,
-    this.castingTime,
-    this.range,
-    this.components,
-    this.verbal,
-    this.somatic,
-    this.material,
-    this.concentration,
-    this.duration,
-    this.savingThrow,
-    this.specialCondition,
-    this.canUpcast,
-    this.increasesAtMilestonePcLevels,
-    this.source1,
-    this.page,
-    this.xGtEUpdateToEePotASpellsSpellList,
-    this.errataFix,
-    this.bard,
-    this.cleric,
-    this.druid,
-    this.paladin,
-    this.ranger,
-    this.sorcerer,
-    this.warlock,
-    this.wizard,
-  });
+  Fields(
+      {this.spellName,
+      this.level,
+      this.school,
+      this.ritual,
+      this.castingTime,
+      this.range,
+      this.components,
+      this.verbal,
+      this.somatic,
+      this.material,
+      this.concentration,
+      this.duration,
+      this.savingThrow,
+      this.specialCondition,
+      this.canUpcast,
+      this.increasesAtMilestonePCLevels,
+      this.source1,
+      this.page,
+      this.xGtEUpdateToEEPotASpellsSpellList,
+      this.errataFix,
+      this.bard,
+      this.cleric,
+      this.druid,
+      this.paladin,
+      this.ranger,
+      this.sorcerer,
+      this.warlock,
+      this.wizard,
+      this.materials});
 
-  factory Fields.fromJson(Map<String, dynamic> json) => Fields(
-    spellName: json["Spell Name"],
-    level: json["Level"],
-    school: json["School"],
-    ritual: json["Ritual"],
-    castingTime: json["Casting Time"],
-    range: json["Range"],
-    components: json["Components"],
-    verbal: json["Verbal"],
-    somatic: json["Somatic"],
-    material: json["Material"],
-    concentration: json["Concentration"],
-    duration: json["Duration"],
-    savingThrow: json["Saving Throw"],
-    specialCondition: json["Special Condition"],
-    canUpcast: json["Can Upcast"],
-    increasesAtMilestonePcLevels: json["Increases at Milestone PC Levels"],
-    source1: json["Source 1"],
-    page: json["Page"],
-    xGtEUpdateToEePotASpellsSpellList: json["XGtE Update to EE/PotA Spells/Spell List"],
-    errataFix: json["Errata Fix"],
-    bard: json["Bard"],
-    cleric: json["Cleric"],
-    druid: json["Druid"],
-    paladin: json["Paladin"],
-    ranger: json["Ranger"],
-    sorcerer: json["Sorcerer"],
-    warlock: json["Warlock"],
-    wizard: json["Wizard"],
-  );
+  Fields.fromJson(Map<String, dynamic> json) {
+    spellName = json['Spell Name'];
+    level = json['Level'];
+    school = json['School'];
+    ritual = json['Ritual'];
+    castingTime = json['Casting Time'];
+    range = json['Range'];
+    components = json['Components'];
+    verbal = json['Verbal'];
+    somatic = json['Somatic'];
+    material = json['Material'];
+    concentration = json['Concentration'];
+    duration = json['Duration'];
+    savingThrow = json['Saving Throw'];
+    specialCondition = json['Special Condition'];
+    canUpcast = json['Can Upcast'];
+    increasesAtMilestonePCLevels = json['Increases at Milestone PC Levels'];
+    source1 = json['Source 1'];
+    page = json['Page'];
+    xGtEUpdateToEEPotASpellsSpellList =
+        json['XGtE Update to EE/PotA Spells/Spell List'];
+    errataFix = json['Errata Fix'];
+    bard = json['Bard'];
+    cleric = json['Cleric'];
+    druid = json['Druid'];
+    paladin = json['Paladin'];
+    ranger = json['Ranger'];
+    sorcerer = json['Sorcerer'];
+    warlock = json['Warlock'];
+    wizard = json['Wizard'];
+    materials = json['Materials'];
+  }
 
-  Map<String, dynamic> toJson() => {
-    "Spell Name": spellName,
-    "Level": level,
-    "School": school,
-    "Ritual": ritual,
-    "Casting Time": castingTime,
-    "Range": range,
-    "Components": components,
-    "Verbal": verbal,
-    "Somatic": somatic,
-    "Material": material,
-    "Concentration": concentration,
-    "Duration": duration,
-    "Saving Throw": savingThrow,
-    "Special Condition": specialCondition,
-    "Can Upcast": canUpcast,
-    "Increases at Milestone PC Levels": increasesAtMilestonePcLevels,
-    "Source 1": source1,
-    "Page": page,
-    "XGtE Update to EE/PotA Spells/Spell List": xGtEUpdateToEePotASpellsSpellList,
-    "Errata Fix": errataFix,
-    "Bard": bard,
-    "Cleric": cleric,
-    "Druid": druid,
-    "Paladin": paladin,
-    "Ranger": ranger,
-    "Sorcerer": sorcerer,
-    "Warlock": warlock,
-    "Wizard": wizard,
-  };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['Spell Name'] = this.spellName;
+    data['Level'] = this.level;
+    data['School'] = this.school;
+    data['Ritual'] = this.ritual;
+    data['Casting Time'] = this.castingTime;
+    data['Range'] = this.range;
+    data['Components'] = this.components;
+    data['Verbal'] = this.verbal;
+    data['Somatic'] = this.somatic;
+    data['Material'] = this.material;
+    data['Concentration'] = this.concentration;
+    data['Duration'] = this.duration;
+    data['Saving Throw'] = this.savingThrow;
+    data['Special Condition'] = this.specialCondition;
+    data['Can Upcast'] = this.canUpcast;
+    data['Increases at Milestone PC Levels'] =
+        this.increasesAtMilestonePCLevels;
+    data['Source 1'] = this.source1;
+    data['Page'] = this.page;
+    data['XGtE Update to EE/PotA Spells/Spell List'] =
+        this.xGtEUpdateToEEPotASpellsSpellList;
+    data['Errata Fix'] = this.errataFix;
+    data['Bard'] = this.bard;
+    data['Cleric'] = this.cleric;
+    data['Druid'] = this.druid;
+    data['Paladin'] = this.paladin;
+    data['Ranger'] = this.ranger;
+    data['Sorcerer'] = this.sorcerer;
+    data['Warlock'] = this.warlock;
+    data['Wizard'] = this.wizard;
+    data['Materials'] = this.materials;
+    return data;
+  }
 }
