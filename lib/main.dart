@@ -12,10 +12,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.yellow,
       ),
-      home: MyHomePage(
-
-          title: 'Inky\'s Spellbook'
-      ),
+      home: MyHomePage(title: 'Inky\'s Spellbook'),
     );
   }
 }
@@ -29,9 +26,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  var spellList = getData();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +33,26 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Container(
+        child: FutureBuilder(
+          future: getData(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.data == null) {
+              return Container(
+                child: Text("Finding Spells..."),
+              );
+            } else {
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(snapshot.data[index].fields.spellName),
+                    subtitle: Text(snapshot.data[index].fields.level),
+                  );
+                },
+              );
+            }
+          },
+        ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
