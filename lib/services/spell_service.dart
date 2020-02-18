@@ -7,9 +7,10 @@ String url =
     'https://api.airtable.com/v0/appBTswdiWZFat1fp/SpellingB?maxRecords=700&view=Grid%20view';
 Map<String, String> header = {"Authorization": "Bearer keyZiCYQ71meclPnH"};
 
-List<Spell> fullList = [];
+List<SpellObject> fullList = [];
 
-Future<List<Spell>> getData() async {
+Future<List<SpellObject>> getData() async {
+  fullList.clear();
 
   http.Response response = await http.get(url, headers: header);
 
@@ -17,8 +18,9 @@ Future<List<Spell>> getData() async {
   if (response.statusCode == 200) {
     Map<String, dynamic> dataParentObj = json.decode(response.body);
 
-    for (var spell in dataParentObj["records"]) {
-      fullList.add(spellFromJson(spell));
+    var spellRepo = Spells.fromJson(dataParentObj);
+    for (var spell in spellRepo.spellObjects) {
+      fullList.add(spell);
     }
     log("length of list: ${fullList.length}");
     return fullList;
