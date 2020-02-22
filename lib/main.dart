@@ -1,11 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:spellbook/routes/spell_detail_route.dart';
 import 'dart:developer';
-
 import 'data_models/spell_model.dart';
 
 void main() => runApp(MyApp());
@@ -61,24 +59,28 @@ class _MyHomePageState extends State<MyHomePage> {
           return ListView.builder(
             itemCount: snapshot.data.length,
             itemBuilder: (BuildContext context, int index) {
-              return Card(
-                child: ListTile(
-                  title: Text(snapshot.data[index].name),
-                  trailing: Icon(Icons.more_vert),
-                  subtitle: Text("Level: ${snapshot.data[index].level}"),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => SpellDetailRoute(
-                                snapshot.data[index] as Spell)));
-                  },
-                ),
-              );
+              return getSpellCardListItem(snapshot, index, context);
             },
           );
         },
       )),
+    );
+  }
+
+  Card getSpellCardListItem(AsyncSnapshot snapshot, int index, BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(snapshot.data[index].name),
+        trailing: Icon(Icons.more_vert),
+        subtitle: Text("Level: ${snapshot.data[index].level}"),
+        onTap: () {
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) => SpellDetailRoute(
+                      snapshot.data[index] as Spell)));
+        },
+      ),
     );
   }
 }
