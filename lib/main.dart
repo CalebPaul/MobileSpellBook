@@ -1,6 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:spellbook/routes/spell_detail_route.dart';
 import 'dart:developer';
-import 'services/spell_service.dart';
+
+import 'data_models/spell_model.dart';
 
 void main() => runApp(MyApp());
 
@@ -26,6 +32,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Future<List<Spell>> _getSpells() async {
+    var list = new List<Spell>();
+
+    var rawString = await rootBundle.loadString('assets/spells.json');
+    var jsonString = json.decode(rawString);
+
+    for (var spell in jsonString) {
+      list.add(Spell.fromJson(spell));
+    }
+    log("spells: ${list.length}");
+
+    //sort alphabetically by spell name
+    list.sort((a, b) => a.name.compareTo(b.name));
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,27 +55,30 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Container(
-        child: FutureBuilder(
-          future: getData(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.data == null) {
-              return Container(
-                child: Text("Finding Spells..."),
+          child: FutureBuilder(
+        future: _getSpells(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          return ListView.builder(
+            itemCount: snapshot.data.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Card(
+                child: ListTile(
+                  title: Text(snapshot.data[index].name),
+                  trailing: Icon(Icons.more_vert),
+                  subtitle: Text("Level: ${snapshot.data[index].level}"),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) => SpellDetailRoute(
+                                snapshot.data[index] as Spell)));
+                  },
+                ),
               );
-            } else {
-              return ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(snapshot.data[index].fields.spellName),
-                    subtitle: Text(snapshot.data[index].fields.level),
-                  );
-                },
-              );
-            }
-          },
-        ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+            },
+          );
+        },
+      )),
     );
   }
 }
