@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spellbook/app.dart';
 import 'package:spellbook/data_models/spell_model.dart';
 
 class SpellDetailRoute extends StatelessWidget{
@@ -11,11 +12,13 @@ class SpellDetailRoute extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(spell.name)
+        title: Text(spell.name, style: AppTextStyles.header,)
       ),
       body: Container(
-        child: Center(
-          child: Text('nothing here yet.'),
+        child: SafeArea(
+          child: Center(
+            child: Text(spell.description),
+          ),
         ),
       ),
     );
