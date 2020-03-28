@@ -1,3 +1,5 @@
+import 'package:flutter_svg/flutter_svg.dart';
+
 class Spell {
   String castingTime;
   List<String> classes;
@@ -65,6 +67,86 @@ class Spell {
     data['type'] = this.type;
     return data;
   }
+
+  var damageTypesMap = {
+    DamageType.acid: 'acid',
+    DamageType.bludgeoning: 'bludgeoning',
+    DamageType.cold: 'cold',
+    DamageType.fire: 'fire',
+    DamageType.force: 'force',
+    DamageType.lightning: 'lightning',
+    DamageType.necrotic: 'necrotic',
+    DamageType.piercing: 'piercing',
+    DamageType.poison: 'poison',
+    DamageType.psychic: 'psychic',
+    DamageType.radiant: 'radiant',
+    DamageType.slashing: 'slashing',
+    DamageType.thunder: 'thunder',
+  };
+
+  var svgDamageAssetMap = {
+    'acid': 'assets/beaker.svg',
+    'bludgeoning': 'assets/hammer.svg',
+    'cold': 'assets/snow.svg',
+    'fire': 'assets/fire.svg',
+    'force': 'assets/atom.svg',
+    'lightning': 'assets/lightning.svg',
+    'necrotic': 'assets/skull.svg',
+    'piercing': 'assets/dart.svg',
+    'poison': 'assets/poison.svg',
+    'psychic': 'assets/pain.svg',
+    'radiant': 'assets/angel.svg',
+    'slashing': 'assets/sword.svg',
+    'thunder': 'assets/thunderstorm.svg'
+  };
+
+  List<String> getDamageTypes() {
+    var damageTypes = new List<String>();
+    var i = 0;
+    var words = description.split(' ');
+
+    for (var word in words) {
+      if (word.contains('damage')) {
+        int target = i - 1;
+        //check if word.toLower() is in map before adding
+        if (damageTypesMap.containsValue(words[target].toLowerCase())) {
+          damageTypes.add(words[target].toLowerCase());
+        }
+      }
+      i++;
+    }
+    return damageTypes;
+  }
+
+  List<SvgPicture> buildDamageSvgPicture() {
+    var svgList = new List<SvgPicture>();
+
+    for (var assetKey in getDamageTypes()) {
+      svgList.add(SvgPicture.asset(
+        svgDamageAssetMap[assetKey],
+        width: 30.0,
+        height: 30.0,
+      ));
+    }
+    return svgList;
+  }
+
+}
+
+enum DamageType {
+  acid,
+  bludgeoning,
+  cold,
+  fire,
+  force,
+  lightning,
+  necrotic,
+  piercing,
+  poison,
+  psychic,
+  radiant,
+  slashing,
+  thunder
 }
 
 class Components {
