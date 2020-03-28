@@ -31,6 +31,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Future<List<Spell>> _futureSpells;
+
+  @override
+  void initState() {
+    _futureSpells = _getSpells();
+    super.initState();
+  }
+
   Future<List<Spell>> _getSpells() async {
     var list = new List<Spell>();
 
@@ -51,23 +59,26 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.title,
-          style: AppTextStyles.header,
+        title: Center(
+          child: Text(
+            widget.title,
+            style: AppTextStyles.header,
+          ),
         ),
       ),
       body: Container(
-          child: FutureBuilder(
-        future: _getSpells(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          return ListView.builder(
-            itemCount: snapshot.data.length,
-            itemBuilder: (BuildContext context, int index) {
-              return buildSpellListItem(snapshot, index, context);
-            },
-          );
-        },
-      )),
+        child: FutureBuilder(
+          future: _futureSpells,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (BuildContext context, int index) {
+                return buildSpellListItem(snapshot, index, context);
+              },
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -91,6 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   builder: (context) =>
                       SpellDetailRoute(snapshot.data[index] as Spell)));
         },
+        onLongPress: () {},
       ),
     );
   }
