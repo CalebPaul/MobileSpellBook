@@ -3,14 +3,21 @@
 Data Visualization for 5E D&D Spell Lists
 
 ## ToDo
- - Add initial Visualisation UI for selected spells
- - Add Fab on ListView to go to Viz UI
- - Add Search
- - Add Filters
- - Add ability to save spell lists
- - Find Icon Assets for all damage types
- - Implement fancy list
- - Handle state changes
+- [x]Parse Json
+- [x]Add string parse methods to spell model class
+- [x]List Spells
+- [x]Find Icon Assets for all damage types
+- [x]Implement Icons for damage conveyance in Spell Detail Route
+- [x]Finish Initial Spell Detail Route
+- [ ]Add Search
+- [ ]Store spell selection in memory
+- [ ]Handle state changes
+- [ ]Add initial Visualisation UI for selected spells
+- [ ]Use persistent storage for spell selection
+- [ ]Add Fab on ListView to go to Viz UI
+- [ ]Add Filters
+- [ ]Add ability to save spell lists
+- [ ]Implement fancy list
 
 ### Damage Types
  - acid (Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>)
