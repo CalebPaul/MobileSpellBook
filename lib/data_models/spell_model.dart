@@ -99,14 +99,16 @@ class Spell {
     'slashing': 'assets/sword.svg',
     'thunder': 'assets/thunderstorm.svg'
   };
+  
+  var damageDice = ['d4', 'd6', 'd8', 'd10', 'd12'];
 
-  List<String> getDamageTypes() {
-    var damageTypes = new List<String>();
+  Set<String> getDamageTypes() {
+    var damageTypes = new Set<String>();
     var i = 0;
-    var words = description.split(' ');
+    final words = description.split(' ');
 
     for (var word in words) {
-      if (word.contains('damage')) {
+      if (word.contains('damage') && damageDice.any((dice) => description.contains(dice))) {
         int target = i - 1;
         //check if word.toLower() is in map before adding
         if (damageTypesMap.containsValue(words[target].toLowerCase())) {
@@ -122,15 +124,20 @@ class Spell {
     var svgList = new List<SvgPicture>();
 
     for (var assetKey in getDamageTypes()) {
-      svgList.add(SvgPicture.asset(
-        svgDamageAssetMap[assetKey],
-        width: 30.0,
-        height: 30.0,
-      ));
+      svgList.add(
+        SvgPicture.asset(
+          svgDamageAssetMap[assetKey],
+          width: 25.0,
+          height: 25.0,
+        ),
+      );
     }
     return svgList;
   }
 
+  bool isConcentration() {
+    return duration.contains('entration');
+  }
 }
 
 enum DamageType {
@@ -172,4 +179,5 @@ class Components {
     data['verbal'] = this.verbal;
     return data;
   }
+
 }
