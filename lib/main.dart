@@ -1,11 +1,13 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:spellbook/routes/spell_detail_route.dart';
-import 'dart:developer';
-import 'data_models/spell_model.dart';
+
 import 'app.dart';
+import 'data_models/spell_model.dart';
 
 void main() => runApp(MyApp());
 
@@ -62,21 +64,23 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Center(
           child: Text(
             widget.title,
-            style: AppTextStyles.header,
+            style: AppTextStyles.header1,
           ),
         ),
       ),
-      body: Container(
-        child: FutureBuilder(
-          future: _futureSpells,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            return ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                return buildSpellListItem(snapshot, index, context);
-              },
-            );
-          },
+      body: SafeArea(
+        child: Container(
+          child: FutureBuilder(
+            future: _futureSpells,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return buildSpellListItem(snapshot, index, context);
+                },
+              );
+            },
+          ),
         ),
       ),
     );
