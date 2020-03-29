@@ -1,11 +1,12 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:spellbook/routes/spell_detail_route.dart';
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:spellbook/routes/spell_detail_route.dart';
+
+import 'app.dart';
 import 'data_models/spell_model.dart';
 
 void main() => runApp(MyApp());
@@ -32,6 +33,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Future<List<Spell>> _futureSpells;
+
+  @override
+  void initState() {
+    _futureSpells = _getSpells();
+    super.initState();
+  }
+
   Future<List<Spell>> _getSpells() async {
     var list = new List<Spell>();
 
@@ -52,33 +61,53 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Center(
+          child: Text(
+            widget.title,
+            style: AppTextStyles.header1,
+          ),
+        ),
       ),
-      body: Container(
+      body: SafeArea(
+        child: Container(
           child: FutureBuilder(
-        future: _getSpells(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          return ListView.builder(
-            itemCount: snapshot.data.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Card(
-                child: ListTile(
-                  title: Text(snapshot.data[index].name),
-                  trailing: Icon(Icons.more_vert),
-                  subtitle: Text("Level: ${snapshot.data[index].level}"),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => SpellDetailRoute(
-                                snapshot.data[index] as Spell)));
-                  },
-                ),
+            future: _futureSpells,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return buildSpellListItem(snapshot, index, context);
+                },
               );
             },
-          );
+          ),
+        ),
+      ),
+    );
+  }
+
+  Card buildSpellListItem(
+      AsyncSnapshot snapshot, int index, BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(
+          snapshot.data[index].name,
+          style: AppTextStyles.listTitle,
+        ),
+        trailing: Icon(Icons.more_vert),
+        subtitle: Text(
+          "Level: ${snapshot.data[index].level}",
+          style: AppTextStyles.subtitle,
+        ),
+        onTap: () {
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) =>
+                      SpellDetailRoute(snapshot.data[index] as Spell)));
         },
-      )),
+        onLongPress: () {},
+      ),
     );
   }
 }
