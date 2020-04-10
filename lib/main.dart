@@ -33,20 +33,31 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Spell> _spells = [];
+  List<Spell> _filteredSpells = [];
   bool isSearching = false;
 
   @override
   void initState() {
     _getSpells().then((data) {
       setState(() {
-        _spells = data;
+        _spells = _filteredSpells = data;
       });
     });
     super.initState();
   }
 
   void _filterSpells(value) {
-    print(value);
+    setState(() {
+      _filteredSpells = _spells
+          .where((spell) =>
+              (spell.name
+                  .toLowerCase()
+                  .contains(value.toString().toLowerCase())) ||
+              (spell.description
+                  .toLowerCase()
+                  .contains(value.toString().toLowerCase())))
+          .toList();
+    });
   }
 
   _getSpells() async {
@@ -105,6 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     setState(() {
                       //toggle search
                       this.isSearching = !this.isSearching;
+                      _filteredSpells = _spells;
                     });
                   },
                 ),
@@ -113,9 +125,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SafeArea(
         child: _spells.length > 0
             ? ListView.builder(
-                itemCount: _spells.length,
+                itemCount: _filteredSpells.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return buildSpellListItem(_spells, index, context);
+                  return buildSpellListItem(_filteredSpells, index, context);
                 },
               )
             : Center(
