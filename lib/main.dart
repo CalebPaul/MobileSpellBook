@@ -32,12 +32,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<List<Spell>> _futureSpells;
+  List<Spell> _spells = [];
   bool isSearching = false;
 
   @override
   void initState() {
-    _futureSpells = _getSpells();
+    _getSpells().then((data) {
+      setState(() {
+        _spells = data;
+      });
+    });
     super.initState();
   }
 
@@ -45,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     print(value);
   }
 
-  Future<List<Spell>> _getSpells() async {
+  _getSpells() async {
     var list = new List<Spell>();
 
     var rawString = await rootBundle.loadString('assets/spells.json');
@@ -74,72 +78,70 @@ class _MyHomePageState extends State<MyHomePage> {
               )
             : TextField(
                 decoration: InputDecoration(
-                  //left search
-                  icon: Icon(Icons.search),
-                  hintText: 'Search Spells',
-                ),
-          onChanged: (value) {
+                    //left search
+                    icon: Icon(Icons.search),
+                    hintText: 'search spells',
+                    hintStyle: AppTextStyles.baseHint),
+                onChanged: (value) {
                   _filterSpells(value);
-          },
+                },
               ),
         actions: <Widget>[
-          !isSearching ? IconButton(
-            //top right search
-            icon: Icon(Icons.search),
-            onPressed: () {
-              setState(() {
-                //toggle search
-                this.isSearching = !this.isSearching;
-              });
-            },
-          ) :
-          IconButton(
-            //top right search
-            icon: Icon(Icons.cancel),
-            onPressed: () {
-              setState(() {
-                //toggle search
-                this.isSearching = !this.isSearching;
-              });
-            },
-          ),
+          !isSearching
+              ? IconButton(
+                  //top right search
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    setState(() {
+                      //toggle search
+                      this.isSearching = !this.isSearching;
+                    });
+                  },
+                )
+              : IconButton(
+                  //top right search
+                  icon: Icon(Icons.cancel),
+                  onPressed: () {
+                    setState(() {
+                      //toggle search
+                      this.isSearching = !this.isSearching;
+                    });
+                  },
+                ),
         ],
       ),
       body: SafeArea(
-        child: FutureBuilder(
-          future: _futureSpells,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            return ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                return buildSpellListItem(snapshot, index, context);
-              },
-            );
-          },
-        ),
+        child: _spells.length > 0
+            ? ListView.builder(
+                itemCount: _spells.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return buildSpellListItem(_spells, index, context);
+                },
+              )
+            : Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
     );
   }
 
-  Card buildSpellListItem(
-      AsyncSnapshot snapshot, int index, BuildContext context) {
+  Card buildSpellListItem(List<Spell> spells, int index, BuildContext context) {
     return Card(
       child: ListTile(
         title: Text(
-          snapshot.data[index].name,
+          spells[index].name,
           style: AppTextStyles.listTitle,
         ),
         trailing: Icon(Icons.more_vert),
         subtitle: Text(
-          "Level: ${snapshot.data[index].level}",
+          "Level: ${spells[index].level}",
           style: AppTextStyles.subtitle,
         ),
         onTap: () {
           Navigator.push(
               context,
               new MaterialPageRoute(
-                  builder: (context) =>
-                      SpellDetailRoute(snapshot.data[index] as Spell)));
+                  builder: (context) => SpellDetailRoute(spells[index])));
         },
         onLongPress: () {},
       ),
