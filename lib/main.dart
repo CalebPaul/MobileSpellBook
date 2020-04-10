@@ -41,6 +41,10 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
+  void _filterSpells(value) {
+    print(value);
+  }
+
   Future<List<Spell>> _getSpells() async {
     var list = new List<Spell>();
 
@@ -74,6 +78,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   icon: Icon(Icons.search),
                   hintText: 'Search Spells',
                 ),
+          onChanged: (value) {
+                  _filterSpells(value);
+          },
               ),
         actions: <Widget>[
           !isSearching ? IconButton(
