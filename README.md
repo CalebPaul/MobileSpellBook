@@ -9,7 +9,7 @@ Data Visualization for 5E D&D Spell Lists
 - [x]Find Icon Assets for all damage types
 - [x]Implement Icons for damage conveyance in Spell Detail Route
 - [x]Finish Initial Spell Detail Route
-- [ ]Add Search
+- [x]Add Search
 - [ ]Store spell selection in memory
 - [ ]Handle state changes
 - [ ]Add initial Visualisation UI for selected spells
