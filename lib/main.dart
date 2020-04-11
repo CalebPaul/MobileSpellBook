@@ -1,11 +1,8 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:spellbook/routes/spell_detail_route.dart';
-
 import 'app.dart';
 import 'data_models/spell_model.dart';
 
@@ -15,7 +12,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Inky\'s Spellbook',
       theme: ThemeData(
         primarySwatch: Colors.yellow,
       ),
@@ -33,15 +31,35 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<List<Spell>> _futureSpells;
+  List<Spell> _spells = [];
+  List<Spell> _filteredSpells = [];
+  bool isSearching = false;
 
   @override
   void initState() {
-    _futureSpells = _getSpells();
+    _getSpells().then((data) {
+      setState(() {
+        _spells = _filteredSpells = data;
+      });
+    });
     super.initState();
   }
 
-  Future<List<Spell>> _getSpells() async {
+  void _filterSpells(value) {
+    setState(() {
+      _filteredSpells = _spells
+          .where((spell) =>
+              (spell.name
+                  .toLowerCase()
+                  .contains(value.toString().toLowerCase())) ||
+              (spell.description
+                  .toLowerCase()
+                  .contains(value.toString().toLowerCase())))
+          .toList();
+    });
+  }
+
+  _getSpells() async {
     var list = new List<Spell>();
 
     var rawString = await rootBundle.loadString('assets/spells.json');
@@ -61,50 +79,80 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            widget.title,
-            style: AppTextStyles.header1,
-          ),
-        ),
+        title: !isSearching
+            ? Center(
+                child: Text(
+                  widget.title,
+                  style: AppTextStyles.header1,
+                ),
+              )
+            : TextField(
+                decoration: InputDecoration(
+                    //left search
+                    icon: Icon(Icons.search),
+                    hintText: 'search spells',
+                    hintStyle: AppTextStyles.baseHint),
+                onChanged: (value) {
+                  _filterSpells(value);
+                },
+              ),
+        actions: <Widget>[
+          !isSearching
+              ? IconButton(
+                  //top right search
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    setState(() {
+                      //toggle search
+                      this.isSearching = !this.isSearching;
+                    });
+                  },
+                )
+              : IconButton(
+                  //top right search
+                  icon: Icon(Icons.cancel),
+                  onPressed: () {
+                    setState(() {
+                      //toggle search
+                      this.isSearching = !this.isSearching;
+                      _filteredSpells = _spells;
+                    });
+                  },
+                ),
+        ],
       ),
       body: SafeArea(
-        child: Container(
-          child: FutureBuilder(
-            future: _futureSpells,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              return ListView.builder(
-                itemCount: snapshot.data.length,
+        child: _spells.length > 0
+            ? ListView.builder(
+                itemCount: _filteredSpells.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return buildSpellListItem(snapshot, index, context);
+                  return buildSpellListItem(_filteredSpells, index, context);
                 },
-              );
-            },
-          ),
-        ),
+              )
+            : Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
     );
   }
 
-  Card buildSpellListItem(
-      AsyncSnapshot snapshot, int index, BuildContext context) {
+  Card buildSpellListItem(List<Spell> spells, int index, BuildContext context) {
     return Card(
       child: ListTile(
         title: Text(
-          snapshot.data[index].name,
+          spells[index].name,
           style: AppTextStyles.listTitle,
         ),
         trailing: Icon(Icons.more_vert),
         subtitle: Text(
-          "Level: ${snapshot.data[index].level}",
+          "Level: ${spells[index].level}",
           style: AppTextStyles.subtitle,
         ),
         onTap: () {
           Navigator.push(
               context,
               new MaterialPageRoute(
-                  builder: (context) =>
-                      SpellDetailRoute(snapshot.data[index] as Spell)));
+                  builder: (context) => SpellDetailRoute(spells[index])));
         },
         onLongPress: () {},
       ),
