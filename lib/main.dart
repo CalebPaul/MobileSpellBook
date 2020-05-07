@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:spellbook/data_models/spell_list_data.dart';
 import 'package:spellbook/routes/spell_detail_route.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'app.dart';
@@ -14,13 +16,16 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Inky\'s Spellbook',
-      theme: ThemeData(
-        primarySwatch: Colors.yellow,
+    return ChangeNotifierProvider(
+      create: (context) => SpellListData(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Inky\'s Spellbook',
+        theme: ThemeData(
+          primarySwatch: Colors.yellow,
+        ),
+        home: MyHomePage(title: 'Inky\'s Spellbook'),
       ),
-      home: MyHomePage(title: 'Inky\'s Spellbook'),
     );
   }
 }
@@ -36,7 +41,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Spell> _spells = [];
   List<Spell> _filteredSpells = [];
-  List<Spell> _selectedSpells = [];
   bool isSearching = false;
   int _navigationIndex = 0;
 
@@ -88,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //spidey sense says this is an anti-pattern, but idk
     var tabs = [
       buildSpellListBody(),
-      Center(child: Text("Charts and Graphs: ${_selectedSpells.toString()}")),
+      Center(child: Text("Charts and Graphs: ${Provider.of<SpellListData>(context). selectedSpells.length} spells to analyze")),
       Center(child: Text("Settings")),
     ];
 
@@ -202,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   builder: (context) => SpellDetailRoute(spells[index])));
         },
         onLongPress: () {
-          _selectedSpells.add(spells[index]);
+          Provider.of<SpellListData>(context, listen: false).addSpell(spells[index]);
           Fluttertoast.showToast(msg: "${spells[index].name} added to spell list.", toastLength: Toast.LENGTH_SHORT);
         },
       ),
