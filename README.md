@@ -10,11 +10,11 @@ Data Visualization for 5E D&D Spell Lists
 - [x]Implement Icons for damage conveyance in Spell Detail Route
 - [x]Finish Initial Spell Detail Route
 - [x]Add Search
-- [ ]Store spell selection in memory
-- [ ]Handle state changes
+- [x]Store spell selection in memory
+- [x]Handle state changes
 - [ ]Add initial Visualisation UI for selected spells
 - [ ]Use persistent storage for spell selection
-- [ ]Add Fab on ListView to go to Viz UI
+- [ ]Add Fab on ListView to go to Viz UI <-_not doing this, bad idea_
 - [ ]Add Filters
 - [ ]Add ability to save spell lists
 - [ ]Implement fancy list
