@@ -7,7 +7,6 @@ import 'package:spellbook/data_models/spell_model.dart';
 
 class SpellDetailRoute extends StatelessWidget {
   final Spell spell;
-  final Widget svg = SvgPicture.asset('beaker.svg');
 
   SpellDetailRoute(this.spell);
 

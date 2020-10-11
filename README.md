@@ -12,6 +12,7 @@ Data Visualization for 5E D&D Spell Lists
 - [x]Add Search
 - [x]Store spell selection in memory
 - [x]Handle state changes
+- [ ]Customize App Icon
 - [ ]Add initial Visualisation UI for selected spells
 - [ ]Use persistent storage for spell selection
 - [ ]Add Fab on ListView to go to Viz UI <-_not doing this, bad idea_

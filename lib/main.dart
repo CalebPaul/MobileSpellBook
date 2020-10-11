@@ -1,13 +1,16 @@
 import 'dart:convert';
 import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:spellbook/data_models/spell_list_data.dart';
 import 'package:spellbook/routes/spell_detail_route.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:spellbook/routes/spellbook_chart_route.dart';
+
 import 'app.dart';
 import 'data_models/spell_model.dart';
 
@@ -43,8 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Spell> _filteredSpells = [];
   bool isSearching = false;
   int _navigationIndex = 0;
-
-
 
   @override
   void initState() {
@@ -89,84 +90,81 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
-    //spidey sense says this is an anti-pattern, but idk
-    var tabs = [
+    final List<Widget> tabs = [
       buildSpellListBody(),
-      Center(child: Text("Charts and Graphs: ${Provider.of<SpellListData>(context). selectedSpells.length} spells to analyze")),
+      SpellbookChartRoute(),
       Center(child: Text("Settings")),
     ];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: !isSearching
-            ? Center(
-                child: Text(
-                  widget.title,
-                  style: AppTextStyles.header1,
-                ),
-              )
-            : TextField(
-                decoration: InputDecoration(
-                    //left search
-                    icon: Icon(Icons.search),
-                    hintText: 'search spells',
-                    hintStyle: AppTextStyles.baseHint),
-                onChanged: (value) {
-                  _filterSpells(value);
-                },
-              ),
-        actions: <Widget>[
-          !isSearching
-              ? IconButton(
-                  //top right search
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    setState(() {
-                      //toggle search
-                      this.isSearching = !this.isSearching;
-                    });
-                  },
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: !isSearching
+              ? Center(
+                  child: Text(
+                    widget.title,
+                    style: AppTextStyles.header1,
+                  ),
                 )
-              : IconButton(
-                  //top right search
-                  icon: Icon(Icons.cancel),
-                  onPressed: () {
-                    setState(() {
-                      //toggle search
-                      this.isSearching = !this.isSearching;
-                      _filteredSpells = _spells;
-                    });
+              : TextField(
+                  decoration: InputDecoration(
+                      //left search
+                      icon: Icon(Icons.search),
+                      hintText: 'search spells',
+                      hintStyle: AppTextStyles.baseHint),
+                  onChanged: (value) {
+                    _filterSpells(value);
                   },
                 ),
-        ],
-      ),
-      body: tabs[_navigationIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedLabelStyle: AppTextStyles.listTitle,
-        selectedItemColor: Colors.black,
-        unselectedLabelStyle: AppTextStyles.listTitle,
-        showUnselectedLabels: false,
-        currentIndex: _navigationIndex,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            title: Text("Spell List"),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.insert_chart),
-            title: Text("Charts"),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            title: Text("Settings"),
-          ),
-        ],
-        onTap: (index) {
-          setState(() {
-            _navigationIndex = index;
-          });
-        },
+          actions: <Widget>[
+            !isSearching
+                ? IconButton(
+                    //top right search
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      setState(() {
+                        //toggle search
+                        this.isSearching = !this.isSearching;
+                      });
+                    },
+                  )
+                : IconButton(
+                    //top right search
+                    icon: Icon(Icons.cancel),
+                    onPressed: () {
+                      setState(() {
+                        //toggle search
+                        this.isSearching = !this.isSearching;
+                        _filteredSpells = _spells;
+                      });
+                    },
+                  ),
+          ],
+        ),
+        body: tabs[_navigationIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          selectedLabelStyle: AppTextStyles.listTitle,
+          selectedItemColor: Colors.black,
+          unselectedLabelStyle: AppTextStyles.listTitle,
+          showUnselectedLabels: false,
+          currentIndex: _navigationIndex,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              title: Text("Spell List"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.insert_chart),
+              title: Text("Charts"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              title: Text("Settings"),
+            ),
+          ],
+          onTap: onNavTapped,
+        ),
       ),
     );
   }
@@ -206,10 +204,19 @@ class _MyHomePageState extends State<MyHomePage> {
                   builder: (context) => SpellDetailRoute(spells[index])));
         },
         onLongPress: () {
-          Provider.of<SpellListData>(context, listen: false).addSpell(spells[index]);
-          Fluttertoast.showToast(msg: "${spells[index].name} added to spell list.", toastLength: Toast.LENGTH_SHORT);
+          Provider.of<SpellListData>(context, listen: false)
+              .addSpell(spells[index]);
+          Fluttertoast.showToast(
+              msg: "${spells[index].name} added to spell list.",
+              toastLength: Toast.LENGTH_SHORT);
         },
       ),
     );
+  }
+
+  void onNavTapped(int index) {
+    setState(() {
+      _navigationIndex = index;
+    });
   }
 }
